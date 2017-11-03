@@ -37,7 +37,7 @@ import java.util.HashSet;
 public class Main {
 
 	public static void main(String[] args){
-		String path = "usecases" + File.separator + "stage03";
+		String path = "usecases" + File.separator + "stage01";
 		Analyse analyse = new AnalyseSample();
 		analyse.doAnalyse(path);
 	}

@@ -1,8 +1,5 @@
 package com.cmsz;
 
-
-import com.cmsz.check.Utils;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -31,14 +28,26 @@ public class AnalyseSample implements Analyse {
 			 BufferedReader reader1 = new BufferedReader(new FileReader(logFiles[1]));
 
 		) {
-			String tep=null;
+			String tep_receive=null;
+			String tep_send=null;
 			HashSet<String> receive_set=new HashSet<String>();
 			HashSet<String> send_set=new HashSet<String>();
 			HashSet<String> fail=new HashSet<String>();
 			HashSet<String> interSet = new HashSet<String>();
 
-			while ((tep=reader0.readLine())!=null){
-				String[] test=tep.split("#Serial:|#STATUS:");
+			/**区分状态send和fail*/
+			while ((tep_send=reader1.readLine())!=null){
+				String[] test=tep_send.split("#Serial:|#STATUS:");
+				if (test[2].equals("SEND")) {
+					send_set.add(test[1]);
+				}else {
+					fail.add(test[1]);
+				}
+			}
+
+			/**区分状态receive和fail*/
+			while ((tep_receive=reader0.readLine())!=null){
+				String[] test=tep_receive.split("#Serial:|#STATUS:");
 				if (test[2].equals("RECEIVE")) {
 					receive_set.add(test[1]);
 					//System.out.println(test[2]);
@@ -48,21 +57,14 @@ public class AnalyseSample implements Analyse {
 				}
 			}
 
-			while ((tep=reader1.readLine())!=null){
-				String[] test=tep.split("#Serial:|#STATUS:");
-				if (test[2].equals("SEND")) {
-					send_set.add(test[1]);
-				}else {
-					fail.add(test[1]);
-				}
-			}
-
+			/**send和receive取并集*/
 			interSet.addAll(send_set);
 			interSet.retainAll(receive_set);
-			//interSet.removeAll(fail);
 
 			receive_set.removeAll(interSet);
 			send_set.removeAll(interSet);
+
+			/**所有失败的集合*/
 			fail.addAll(send_set);
 			fail.addAll(receive_set);
 
@@ -71,7 +73,7 @@ public class AnalyseSample implements Analyse {
 			writer.write("SUCCESS:"+"\n");
 			for(String a:interSet){
 				writer.write(a+"\n");
-				System.out.println(a);
+				//System.out.println(a);
 			}
 			writer.write("FAIL:"+"\n");
 			for(String a:fail){
