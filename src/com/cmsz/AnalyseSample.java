@@ -26,7 +26,6 @@ public class AnalyseSample implements Analyse {
 		});
 		try (BufferedReader reader0 = new BufferedReader(new FileReader(logFiles[0]));
 			 BufferedReader reader1 = new BufferedReader(new FileReader(logFiles[1]));
-
 		) {
 			String tep_receive=null;
 			String tep_send=null;
